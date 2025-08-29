@@ -1,7 +1,7 @@
 # uBD-Experiments
 Implementation of utility-optimized block design scheme (uBD) in the paper "Optimal Discrete Distribution Estimation under Utillity-Optimized Local Differential Privacy"
 ## Instructions
-Experiments reported in the papaer can be reproduced by running the 'Main.mlx'.
+Experiments reported in the paper can be reproduced by running the 'Main.mlx'.
 ### Data
 Data used for the experiment is generated through 'preprocessData.m' and 'Save_MSE_ULDP.m', the row data are availiable at https://www.census.gov/programs-surveys/acs/microdata.html
 ### ULDP schemes
