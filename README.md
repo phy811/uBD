@@ -3,7 +3,7 @@ Implementation of utility-optimized block design scheme (uBD) in the paper "Opti
 ## Instructions
 Experiments reported in the paper can be reproduced by running the 'Main.mlx' or 'Main.m'
 ### Data
-Data used for the experiment is generated through 'preprocessData.m' and 'Save_MSE_ULDP.m', the row data are availiable at https://www.census.gov/programs-surveys/acs/microdata.html
+Data used for the experiment is generated through 'preprocessData.m' and 'Save_MSE_ULDP.m', the raw data are availiable at https://www.census.gov/programs-surveys/acs/microdata.html
 ### ULDP schemes
 Encoder and decoder for 5 ULDP schemes are provided: uRR, uRAP, uOUE, uHR, and uBD
 The functions 'encode_opt_ULDP.m' & 'decode_opt_ULDP.m' provide the uBD schme presented in the paper
