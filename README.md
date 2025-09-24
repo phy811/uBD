@@ -1,7 +1,7 @@
-# uBD-Experiments
-Implementation of utility-optimized block design scheme (uBD) in the paper "Optimal Discrete Distribution Estimation under Utillity-Optimized Local Differential Privacy"
+# uBD
+Implementation of utility-optimized block design scheme (uBD) in the paper "Fundamental Limit of Discrete Distribution Estimation under Utility-Optimized Local Differential Privacy"
 ## Instructions
-Experiments reported in the paper can be reproduced by running the 'Main.m' or 'Main2.mlx'
+Experiments reported in the paper can be reproduced by running the 'Main.m'
 ### Data
 - Data used for the experiment is generated through 'preprocessData.m' and the raw data are availiable at https://www.census.gov/programs-surveys/acs/microdata.html
 - MSE for each schemes ('MSE_and_R50000_m20_nPts50.mat' and 'MSE_or_R50000_m20_nPts50.mat') are generated through the function 'Save_MSE_ULDP.m'
