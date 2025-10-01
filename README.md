@@ -13,4 +13,5 @@ For successful code execution, make sure to configure the directory paths approp
 #### Environment Setup
 - MATLAB R2024a
 - Required Toolboxes: Optimization Toolbox, Symbolic Math Toolbox
-## References
+## Paper Link
+https://arxiv.org/abs/2509.24173
