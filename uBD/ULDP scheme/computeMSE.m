@@ -8,5 +8,5 @@ function mse = computeMSE(encFun, decFun, rawData, params, pTrue)
     %======================================================================
     Y = encFun(rawData, params);
     p_hat = decFun(Y, params);
-    mse = mean((p_hat - pTrue) .^ 2 );
+    mse = sum((p_hat - pTrue) .^ 2 );
 end

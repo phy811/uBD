@@ -10,6 +10,15 @@ function [M, J1, J2, J3] = compute_M_J(alpha, t, w, v, epsilon)
     k = (1 : v)';
     J1 = (v * (expEps - 1) ^ 2) / (v - 1) * sum(t .* (k .* (v-k)) ...
         ./ ((alpha * k * (expEps - 1) + v) .* (k * expEps + v - k)));
+
+    % Boundary case: all symbols are sensitive (v = w)
+    if v == w
+        J2 = Inf;   
+        J3 = Inf;   
+        M  = (v - 1) / J1;
+        return;
+    end
+
     J2 = ((w-v) * (expEps-1) / (1 - alpha)) * sum(t .* k ...
         ./ (k * expEps + v - k));
     J3 = (v * (w - v) * (expEps - 1) / (w * (1 - alpha))) * sum(t .* k ...

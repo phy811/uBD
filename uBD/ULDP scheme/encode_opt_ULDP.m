@@ -12,7 +12,6 @@ function Y = encode_opt_ULDP(rawData, params)
     w = numel(domain);          % |\mathcal{X}|
     v = numel(sensSet);         % |\mathcal{X}_S|
     n = numel(rawData);         % number of users
-    % opt_alpha = params.alpha;
     opt_t = params.t;
     
     % Pre-allocate output Y
@@ -33,14 +32,13 @@ function Y = encode_opt_ULDP(rawData, params)
     epsH = w - v + sqrt((w - 1) * (w - 2) / 2);
     mix = false;
     if (epsL < expEps) && (expEps < epsH)
-        % [~, opt_t, ~] = optimize_M(w, v, epsilon);
         mix = (nnz(opt_t) >= 2);
     end
     
     % Single-mode encoding (uniform k)
     if ~mix
         k = find(opt_t);
-        % k = UnifParams(v, expEps);      % Optimal k
+        k = min(k(:));
         % Encode sensitive data
         Y(idxSens, :) = encodeSensUsers(...
             rawData, params, idxSens, k, randFlagSens);
@@ -52,10 +50,14 @@ function Y = encode_opt_ULDP(rawData, params)
         
         % Report \mathcal{Y}_I
         idxInclNon = idxNon(inclNon);
-        Y(sub2ind([n, w], idxInclNon, xNon(inclNon))) = true;
+        idxInclNon = idxInclNon(:);
+        xInclNon   = xNon(inclNon);
+        xInclNon   = xInclNon(:);  
+        Y(sub2ind([n, w], idxInclNon, xInclNon)) = true;
     
         % Report \mathcal{Y}_P
         idxExclNon = idxNon(~inclNon);
+        idxExclNon = idxExclNon(:);  
         numExclNon = numel(idxExclNon);
         randMatNon = rand(numExclNon, v);
         [~, colsNon] = mink(randMatNon, k, 2);
@@ -94,12 +96,17 @@ function Y = encode_opt_ULDP(rawData, params)
         % Report \mathcal{Y}_I
         idMask = (choice == numel(probVec));
         idxInclNon = idxNon(idMask);
-        Y(sub2ind([n, w], idxInclNon, rawData(idxInclNon))) = true;
+        idxInclNon = idxInclNon(:);
+        xInclNon   = rawData(idxInclNon);
+        xInclNon   = xInclNon(:);
+        Y(sub2ind([n, w], idxInclNon, xInclNon)) = true;
 
         % Report \mathcal{Y}_P
-        for kk = k
-            rel = (choice == kk);
+        for j = 1:numel(k)
+            kk = k(j);
+            rel = (choice == j);
             absIdx = idxNon(rel);
+            absIdx = absIdx(:);
             numNon2Y_P_k = numel(absIdx);
             randFlag_k = rand(numNon2Y_P_k, v);
             [~, cols] = mink(randFlag_k, kk, 2);
@@ -138,7 +145,7 @@ function Y = encodeSensUsers(rawData, params,...
     randMatSens(linIdxSens) = Inf;                        
     randMatSens(linIdxSens(inclSens)) = -Inf;           
     
-    % Pick k smallest entries -> columns ofr each user
+    % Pick k smallest entries -> columns of each user
     [~, colsSens] = mink(randMatSens, k, 2);         
     subsetSens = reshape(sensSet(colsSens), numSens, k);             
     

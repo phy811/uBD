@@ -9,6 +9,7 @@ function Y = encode_uSS(rawData, params)
     expEps = exp(epsilon);
     domain = params.X;
     sensSet = params.XS;
+    k = params.k;               % optimal k for uSS
     w = numel(domain);          % |\mathcal{X}|
     v = numel(sensSet);         % |\mathcal{X}_S|
     n = numel(rawData);         % number of users 
@@ -24,8 +25,6 @@ function Y = encode_uSS(rawData, params)
     randFlag = rand(n, 1);       % Uniform randoms for each user
     randFlagSens = randFlag(idxSens);
     
-    % Find optimal k for uSS
-    k = find_opt_k(v, expEps);
     % Encode sensitive data
     Y(idxSens, :) = encodeSensUsers(...
         rawData, params, idxSens, k, randFlagSens);
@@ -37,10 +36,14 @@ function Y = encode_uSS(rawData, params)
         
     % Report \mathcal{Y}_I
     idxInclNon = idxNon(inclNon);
-    Y(sub2ind([n, w], idxInclNon, xNon(inclNon))) = true;
+    idxInclNon = idxInclNon(:);
+    xInclNon   = xNon(inclNon);
+    xInclNon   = xInclNon(:); 
+    Y(sub2ind([n, w], idxInclNon, xInclNon)) = true;
     
     % Report \mathcal{Y}_P
     idxExclNon = idxNon(~inclNon);
+    idxExclNon = idxExclNon(:);
     numExclNon = numel(idxExclNon);
     randMatNon = rand(numExclNon, v);
     [~, colsNon] = mink(randMatNon, k, 2);
@@ -50,28 +53,17 @@ function Y = encode_uSS(rawData, params)
     % Report tuple
     z = (expEps - 1) * (k - 1) / (expEps * (k - 1) - k + v);
     pairMask = (randFlag(idxExclNon) <= f*z);
-    xNonExcl = xNon(~inclNon);     
-    Y(sub2ind([n, w], idxExclNon(pairMask), xNonExcl(pairMask))) = true;
-end
+    pairMask = pairMask(:);
 
-%==========================================================================
-function opt_k = find_opt_k(v, expEps)
-    % Find optimal k 
-    % that minimize worst-case MSE of uSS
-    %======================================================================
-    best = inf;
-    for k = 1 : v - 1
-        A =  v * ((k*expEps - expEps + v - k) * (k * expEps - k + v - 1)) ... 
-            / k / (v - k) / (expEps - 1)^2;
-        B = (k * (1 - k) * (expEps - 1) + (v - 1) * (v - 2 * k) ) ...
-            / (k * (v - k) * (expEps - 1));
-        C = v / k / (expEps - 1);
-        W = A + max(B, C);
-        if W < best
-            best = W; 
-            opt_k = k;
-        end
-    end
+    xNonExcl = xNon(~inclNon);
+    xNonExcl = xNonExcl(:);
+    
+    idxPair = idxExclNon(pairMask);
+    idxPair = idxPair(:);
+    xPair = xNonExcl(pairMask);
+    xPair = xPair(:);
+
+    Y(sub2ind([n, w], idxPair, xPair)) = true;
 end
 
 %==========================================================================

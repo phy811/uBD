@@ -5,16 +5,24 @@ function p_hat = decode_opt_ULDP(Y, params)
     % p_hat : w by 1
     %======================================================================
     % Extract parameters
-    % epsilon = params.eps;       % privacy constraint
-    % w = numel(params.X);        % |\mathcal{X}|
-    % v = numel(params.XS);       % |\mathcal{X}_S|
+    epsilon = params.eps;       % privacy constraint
+    expEps = exp(epsilon);
     opt_alpha = params.alpha;
     opt_t = params.t;
-    % Optimize mixture weights and identify active uniformity parameters
-    % [opt_alpha, opt_t, ~] = optimize_M(w, v, epsilon);
-    k = find(opt_t > 0).';
-
-    if isscalar(k)
+    domain = params.X;
+    sensSet = params.XS;
+    w = numel(domain);          % |\mathcal{X}|
+    v = numel(sensSet);         % |\mathcal{X}_S|
+    % Identify active uniformity parameters
+    epsL = sqrt((v - 1) * (v - 2) / 2);
+    epsH = w - v + sqrt((w - 1) * (w - 2) / 2);
+    mix = false;
+    if (epsL < expEps) && (expEps < epsH)
+        mix = (nnz(opt_t) >= 2);
+    end
+    k = find(opt_t);
+    if ~mix
+        k = min(k(:));
         p_hat = decode_single(Y, k, params);
     else
         p_hat = decode_mixture(Y, opt_alpha, opt_t, k, params);
@@ -75,24 +83,25 @@ function p_hat = decode_mixture(Y, opt_alpha, opt_t, k, params)
     domain = params.X;
     sensSet = params.XS;
     nonSet = setdiff(domain, sensSet);
+
     w = numel(domain);          % |\mathcal{X}|
     v = numel(sensSet);         % |\mathcal{X}_S|
     n = size(Y, 1);             % number of users
 
     % Base distribution
     P_alpha = zeros(w, 1);
-    P_alpha(sensSet) = opt_alpha / v;
-    P_alpha(nonSet) = (1 - opt_alpha) / (w - v);
+    P_alpha(1:v) = opt_alpha / v;
+    P_alpha(v+1:w) = (1 - opt_alpha) / (w - v);
 
     % Compute information coefficients $\overline{J}_1, \overline{J}_2,
     % \overline{J}_3$
     [~, J1, J2, J3] = compute_M_J(opt_alpha, opt_t, w, v, eps);
     
     [~, sensIdxGlobal] = ismember(domain, sensSet);
-
+    
     % Split Y into sensitive part (first v columns) and nonsensitive part
     Y_P = Y(:, 1 : v);
-    Y_I = Y(:, v+1 : end);
+    Y_I = Y(:, v + 1 : end);
 
     % Initialize score function
     eta = zeros(w, 1);

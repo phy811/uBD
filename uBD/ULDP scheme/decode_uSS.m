@@ -8,6 +8,7 @@ function p_hat = decode_uSS(Y, params)
     expEps = exp(params.eps);
     domain = params.X;
     sensSet = params.XS;
+    k = params.k;
     nonSet = setdiff(domain, sensSet);
     w = numel(params.X);        % |\mathcal{X}|
     v = numel(params.XS);       % |\mathcal{X}_S|
@@ -15,7 +16,6 @@ function p_hat = decode_uSS(Y, params)
     
     % Compute empirical frequencies for each symbol
     freq = sum(Y, 1) / n;
-    k = max(max(sum(Y, 2)) - 1, 1);
     
     % Closed-form coefficients
     p_star = k * expEps / (k * expEps + v - k);
