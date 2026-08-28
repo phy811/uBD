@@ -34,6 +34,8 @@ For successful code execution, make sure to configure the directory paths approp
 - MATLAB R2025a
 - Required Toolboxes: Optimization Toolbox, Symbolic Math Toolbox
 
-## Paper Link
+## Paper Reference
 
-<https://arxiv.org/abs/2509.24173>
+S.-M. Yoon, H.-Y. Park, S.-H. Nam, and S.-H. Lee, "Fundamental Limit of Discrete Distribution Estimation Under Utility-Optimized Local Differential Privacy," *IEEE Transactions on Information Forensics and Security*, vol. 21, pp. 5312–5327, 2026, doi: 10.1109/TIFS.2026.3696567.
+
+https://ieeexplore.ieee.org/document/11534891
